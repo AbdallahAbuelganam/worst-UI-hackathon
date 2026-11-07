@@ -70,7 +70,7 @@ function loadThumb(v) {
     vid.removeAttribute('src');
     vid.load();
   }, { once: true });
-  vid.src = encodeURI(v.src);
+  vid.src = `${encodeURI(v.src)}?v=${Date.now()}`;
 }
 
 // ---------- layout ----------

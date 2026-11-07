@@ -28,6 +28,34 @@ let resumeAfterHolds = false;
 let lastTime = 0;
 let midrollAcc = 0;
 
+// ---------- finding the video file ----------
+let candidates = [];
+let candidateIdx = 0;
+const bust = Date.now(); // bypass any stale cached copy (e.g. a Git LFS pointer file)
+
+function tryCandidate(i) {
+  candidateIdx = i;
+  video.src = `${encodeURI(candidates[i])}?v=${bust}`;
+  video.currentTime = 0;
+  safePlay();
+}
+
+/** Any .mp4 in resources/ (or resources/videos/) whose name contains "main", via the server's folder listing. */
+async function findMainVideos() {
+  const out = [];
+  for (const folder of ['resources/', 'resources/videos/']) {
+    try {
+      const base = new URL(folder, location.href);
+      const html = await (await fetch(base, { cache: 'no-store' })).text();
+      for (const m of html.matchAll(/href=["']([^"']+?\.mp4)["']/gi)) {
+        const path = decodeURIComponent(new URL(m[1], base).pathname).replace(/^\//, '');
+        if (/main/i.test(path.split('/').pop())) out.push(path);
+      }
+    } catch { /* no listing available */ }
+  }
+  return out;
+}
+
 // ---------- fullscreen ----------
 export function requestFs() {
   const el = document.documentElement;
@@ -113,7 +141,9 @@ export function openPlayer(v) {
   world.classList.add('is-player');
   video.muted = false;
   setVolume(0, 0);
-  video.src = encodeURI(v.src);
+  candidates = [v.src];
+  findMainVideos().then((found) => { for (const f of found) if (!candidates.includes(f)) candidates.push(f); });
+  tryCandidate(0);
   video.currentTime = 0;
   safePlay();
   syncUi();
@@ -134,8 +164,12 @@ export function closePlayer() {
 export function initPlayer() {
   setMainVideoHooks({ hold });
 
-  video.addEventListener('error', () => {
+  video.addEventListener('error', async () => {
     if (!video.getAttribute('src')) return;
+    // the configured file failed: try any other "main" video in resources/ before giving up
+    const found = await findMainVideos();
+    for (const f of found) if (!candidates.includes(f)) candidates.push(f);
+    if (candidateIdx + 1 < candidates.length) { tryCandidate(candidateIdx + 1); return; }
     missing = true;
     video.hidden = true;
     elMissing.hidden = false;
