@@ -39,6 +39,13 @@ Design tokens (colours, Fredoka, radii, shadows, motion) live in `scss/_tokens.s
 
 The real mouse is banned: moving it calls the mouse police.
 
+Extra cruelty (all tunable in `js/config/tuning.js`):
+- **Every on-screen button takes 2 seconds to respond.** The cursor shows a "loading…" countdown while you wait.
+- **The page float gets worse over time.** Over 90s the bob grows from gentle to seasick. Random oil currents shove the page, and Shift+arrow pushes go slightly the wrong way.
+- **Pop-ups keep growing.** Each one opens bigger than the last and swells while it's open. Ads start bigger every time and creep larger, but the X stays 14px.
+- **A scream holds the volume for a full minute**, then it slides back to 0 over 20s.
+- **The dislike flood is faster and bigger.** It starts 2s after the dislike, spawns 3 ads every 2s, and caps at 45.
+
 ## Commands (Space opens the box)
 
 | Command | Effect |
@@ -63,7 +70,7 @@ Evil autocorrect "fixes" about 1 in 5 commands, but never two in a row. For exam
 | What | Where |
 |---|---|
 | Videos, passwords, hints | `js/config/videos.js` |
-| Ad reels (vertical 9:16 `.mp4`) | `js/config/ads.js` (currently `resources/ads videos/`) |
+| Ad reels (vertical 9:16 `.mp4`) | Drop them in `resources/ads videos/`. Every `.mp4` there is found automatically and picked at random. The main sponsor (`code flow duck.mp4`, set in `js/config/ads.js`) gets a blinking MAIN SPONSOR label and is always the first ad. |
 | Thumbnails | `resources/thumbs/<id>.jpg` (optional: if missing, a frame is grabbed from the video) |
 | Every tunable number | `js/config/tuning.js` |
 

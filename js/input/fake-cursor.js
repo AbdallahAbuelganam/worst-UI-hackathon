@@ -3,6 +3,7 @@
 // Hover = fakeenter/fakeleave on [data-hoverable]; Enter = fakeclick on whatever is under it.
 import { bus, cursorActive } from '../state.js';
 import { TUNING } from '../config/tuning.js';
+import { toast } from '../ui/toast.js';
 
 const el = document.getElementById('fake-cursor');
 const held = new Map(); // key -> timestamp pressed
@@ -11,6 +12,9 @@ let y = innerHeight / 2;
 let hovered = null;
 let visible = false;
 let placedOnce = false;
+let pending = null;
+let lastNag = 0;
+const waitEl = el.querySelector('.fake-cursor__wait');
 
 export const cursor = {
   get x() { return x; },
@@ -76,7 +80,31 @@ function click() {
   el.classList.add('is-click');
   setTimeout(() => el.classList.remove('is-click'), 160);
   const raw = targetAt();
-  if (raw) raw.dispatchEvent(new CustomEvent('fakeclick', { bubbles: true, detail: { x, y } }));
+  if (!raw) return;
+  const button = raw.closest('[data-hoverable]');
+  const fire = () => raw.dispatchEvent(new CustomEvent('fakeclick', { bubbles: true, detail: { x, y } }));
+  if (!button) { fire(); return; }
+  // every button takes its sweet time to respond
+  if (pending) {
+    const now = performance.now();
+    if (now - lastNag > 1500) { lastNag = now; toast('Still thinking about your last click.', 'warn', 1400); }
+    return;
+  }
+  pending = button;
+  button.classList.add('is-pending');
+  el.classList.add('is-wait');
+  const t0 = performance.now();
+  const countdown = setInterval(() => {
+    waitEl.textContent = `loading… ${(Math.max(0, TUNING.buttonDelayMs - (performance.now() - t0)) / 1000).toFixed(1)}s`;
+  }, 100);
+  waitEl.textContent = `loading… ${(TUNING.buttonDelayMs / 1000).toFixed(1)}s`;
+  setTimeout(() => {
+    clearInterval(countdown);
+    button.classList.remove('is-pending');
+    el.classList.remove('is-wait');
+    pending = null;
+    if (raw.isConnected) fire();
+  }, TUNING.buttonDelayMs);
 }
 
 export function initFakeCursor() {

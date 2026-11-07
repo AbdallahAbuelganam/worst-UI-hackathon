@@ -41,3 +41,33 @@
 }
 
 @keyframes ring-spin { to { rotate: 360deg; } }
+
+// every button takes 2 seconds to respond
+.fake-cursor__wait {
+  position: absolute;
+  left: 22px;
+  top: 26px;
+  white-space: nowrap;
+  background: $oil;
+  color: $fry;
+  border: 2px solid $fry;
+  border-radius: $r-ball;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  display: none;
+}
+.fake-cursor.is-wait {
+  .fake-cursor__wait { display: block; }
+  .fake-cursor__ring { opacity: 1; border-style: dotted; border-color: $fry; animation: ring-spin .6s linear infinite; }
+  .fake-cursor__arrow { fill: $sesame; }
+}
+
+[data-hoverable].is-pending {
+  outline: 3px dotted $fry !important;
+  outline-offset: 4px;
+  animation: pending .5s ease-in-out infinite !important;
+  filter: saturate(.4) brightness(.85);
+}
+@keyframes pending { 50% { outline-offset: 8px; } }

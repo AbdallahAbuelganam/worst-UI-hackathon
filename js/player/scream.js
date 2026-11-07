@@ -39,7 +39,8 @@ function decayFrom(peak) {
   cancelAnimationFrame(decayRaf);
   const t0 = performance.now();
   const step = (now) => {
-    const t = (now - t0) / TUNING.volumeDecayMs;
+    // hold the scream volume for a full minute, then slide down
+    const t = Math.max(0, now - t0 - TUNING.volumeHoldMs) / TUNING.volumeDecayMs;
     const v = Math.max(0, peak * (1 - t));
     // the peak line drops slower than the volume, so you can see what you lost
     const line = Math.max(0, peak * (1 - t / 2));

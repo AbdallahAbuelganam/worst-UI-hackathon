@@ -17,6 +17,7 @@ import { initDislike, resetDislike } from './player/dislike.js';
 import { initCommands, setCommandHooks } from './commands.js';
 import { repair } from './effects/crash.js';
 import { unlockAudio, preload } from './effects/sfx.js';
+import { initInflate } from './ui/inflate.js';
 
 const screens = {
   dino: document.getElementById('screen-dino'),
@@ -74,6 +75,7 @@ initSkip67();
 initScream();
 initDislike();
 initCommands();
+initInflate();
 preload('resources/skip add.ogg', 'resources/dislike.ogg');
 
 bus.on('key:any', unlockAudio);

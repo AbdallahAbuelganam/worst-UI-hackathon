@@ -108,6 +108,27 @@
     i { display: block; height: 4px; width: 0%; background: $cream; }
   }
 
+  // the main sponsor gets a loud label
+  &__main {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 12px;
+    display: none;
+    justify-content: center;
+    z-index: 2;
+    span, & { font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+    background: $fry;
+    color: $oil;
+    border-top: 3px solid $oil;
+    border-bottom: 3px solid $oil;
+    padding: 4px 6px;
+    text-align: center;
+    animation: main-blink .6s steps(2) infinite;
+  }
+  &.is-main &__main { display: flex; }
+  &.is-main.is-loud.is-flood &__loud { bottom: 46px; }
+
   &__loud {
     position: absolute;
     left: 8px;
@@ -193,6 +214,7 @@
 }
 @keyframes ad-leave { to { transform: scale(.2); opacity: 0; } }
 @keyframes ad-blink { 50% { border-color: $fry; } }
+@keyframes main-blink { 50% { background: $turnip; color: $cream; } }
 
 // ---- Fallback static ads · same 9:16 frame, 2005 energy (sized in container units) ----
 .fad {

@@ -10,7 +10,8 @@
 #world-bob {
   position: absolute;
   inset: 0;
-  &.is-floating { animation: bob 4s ease-in-out infinite; }
+  // the bob itself is driven by js/float.js (it escalates over time)
+  &.is-floating { will-change: transform; }
 }
 
 // The page is a card floating in oil

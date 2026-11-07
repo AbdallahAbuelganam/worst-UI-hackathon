@@ -3,7 +3,7 @@
 // plays "skip add.ogg", then closes it.
 import { bus, state } from './state.js';
 import { TUNING } from './config/tuning.js';
-import { AD_REELS } from './config/ads.js';
+import { AD_REELS, AD_FOLDER, MAIN_AD, MAIN_AD_LABEL } from './config/ads.js';
 import { playFile } from './effects/sfx.js';
 import { toast } from './ui/toast.js';
 
@@ -16,6 +16,9 @@ const floodPlaying = document.getElementById('flood-playing');
 const SKIP_SOUND = 'resources/skip add.ogg';
 let nextId = 1;
 let lastReel = null;
+let reels = [...AD_REELS];
+let spawned = 0; // every ad starts a bit bigger than the last one
+const isMain = (r) => !!r && r.toLowerCase() === MAIN_AD.toLowerCase();
 let floodTimer = null;
 let floodDelay = null;
 const brokenReels = new Set();
@@ -40,9 +43,30 @@ const FALLBACKS = [
   `<div class="fad fad--congrats"><div class="fad__kicker">CONGRATULATIONS</div><div class="fad__big">You are the 1,000,000th person to press Enter</div><div class="fad__small">Prize: this ad, bigger</div></div>`,
 ];
 
+/** Find every .mp4 in the ads folder via the dev server's directory listing. */
+export async function discoverReels() {
+  try {
+    const base = new URL(encodeURI(AD_FOLDER), location.href);
+    const res = await fetch(base, { headers: { Accept: 'text/html' } });
+    if (!res.ok) return;
+    const html = await res.text();
+    const found = new Set();
+    for (const m of html.matchAll(/href=["']([^"']+?\.mp4)["']/gi)) {
+      const path = decodeURIComponent(new URL(m[1], base).pathname).replace(/^\//, '');
+      found.add(path);
+    }
+    if (found.size) reels = [...new Set([...found, ...AD_REELS])];
+  } catch { /* keep the config list */ }
+}
+
 function pickReel() {
-  const pool = AD_REELS.filter((r) => !brokenReels.has(r));
+  const pool = reels.filter((r) => !brokenReels.has(r));
   if (!pool.length) return null;
+  // the main sponsor always gets the first slot
+  if (lastReel === null) {
+    const main = pool.find(isMain);
+    if (main) { lastReel = main; return main; }
+  }
   let r = pool[Math.floor(Math.random() * pool.length)];
   if (pool.length > 1) while (r === lastReel) r = pool[Math.floor(Math.random() * pool.length)];
   lastReel = r;
@@ -53,16 +77,18 @@ function worldSize() {
   return { w: world.clientWidth, h: world.clientHeight };
 }
 
-function sizeFor(step) {
+function sizeFor(step, ad) {
   const { h: wh, w: ww } = worldSize();
-  let h = wh * TUNING.adSizeStepsVh[step] / 100;
+  // pop-ups get bigger and bigger: each new ad starts larger, and it keeps creeping while open
+  const extra = ad ? ad.boost + ad.creep : 0;
+  let h = wh * Math.min(0.94, TUNING.adSizeStepsVh[step] / 100 + extra);
   let w = h * 9 / 16;
   if (w > ww * 0.96) { w = ww * 0.96; h = w * 16 / 9; }
   return { w, h };
 }
 
 function layout(ad) {
-  const { w, h } = sizeFor(ad.sizeStep);
+  const { w, h } = sizeFor(ad.sizeStep, ad);
   const { w: ww, h: wh } = worldSize();
   // grow from centre, then clamp so the box stays fully on screen
   let left = ad.cx - w / 2;
@@ -112,13 +138,17 @@ export function createAd({ source = 'midroll' } = {}) {
       <div class="ad__top"><span class="ad__pill">Ad</span><span class="ad__skip">Skip in 5</span></div>
       <div class="ad__x" data-hoverable role="button" aria-label="Close ad">${X_SVG}</div>
       <div class="ad__progress"><i></i></div>
+      <div class="ad__main">★ ${MAIN_AD_LABEL}</div>
       <div class="ad__loud">${SPEAKER_SVG}newest · loud</div>
       <div class="ad__closing">${PAUSE_SVG}<div class="ad__skipping">Skipping…</div><div class="ad__enjoy">Please enjoy this 6.8 second sound about skipping.</div><div class="ad__bar"><i></i></div></div>
     </div>`;
   const frame = el.querySelector('.ad__frame');
-  const ad = { id, el, frame, video: null, clicks: 0, sizeStep: 0, closing: false, source, skip: 5, cx: 0, cy: 0 };
+  const boost = Math.min(TUNING.adBoostMax, spawned * TUNING.adBoostPerAd);
+  spawned++;
+  const ad = { id, el, frame, video: null, clicks: 0, sizeStep: 0, closing: false, source, skip: 5, cx: 0, cy: 0, boost, creep: 0 };
 
   const reel = pickReel();
+  if (isMain(reel)) el.classList.add('is-main');
   if (reel) {
     const v = document.createElement('video');
     v.className = 'ad__reel';
@@ -140,7 +170,7 @@ export function createAd({ source = 'midroll' } = {}) {
 
   // random position that keeps it fully on screen
   const { w: ww, h: wh } = worldSize();
-  const { w, h } = sizeFor(0);
+  const { w, h } = sizeFor(0, ad);
   ad.cx = w / 2 + 4 + Math.random() * Math.max(0, ww - w - 8);
   ad.cy = h / 2 + 4 + Math.random() * Math.max(0, wh - h - 8 - (state.screen === 'PLAYER' ? 120 : 0));
   if (source === 'flood') el.style.rotate = `${(Math.random() - 0.5) * 14}deg`;
@@ -152,6 +182,8 @@ export function createAd({ source = 'midroll' } = {}) {
     if (ad.closing) return;
     ad.skip++;
     el.querySelector('.ad__skip').textContent = `Skip in ${ad.skip}`;
+    ad.creep += TUNING.adCreepPerSec;
+    layout(ad);
   }, 1000);
 
   el.querySelector('.ad__x').addEventListener('fakeclick', (e) => { e.stopPropagation(); clickX(ad); });
@@ -169,7 +201,7 @@ function clickX(ad) {
   if (ad.closing) return; // clicks during closing are ignored
   ad.clicks++;
   if (ad.clicks < TUNING.adCloseClicks) {
-    const before = sizeFor(ad.sizeStep).h;
+    const before = sizeFor(ad.sizeStep, ad).h;
     ad.sizeStep = Math.min(TUNING.adSizeStepsVh.length - 1, ad.sizeStep + 1);
     const after = layout(ad).h;
     ad.el.style.setProperty('--from', (before / after).toFixed(3));
@@ -237,8 +269,9 @@ export function startFlood() {
   if (state.adFloodActive) return;
   state.adFloodActive = true;
   floodPanel.hidden = false;
-  createAd({ source: 'flood' });
-  floodTimer = setInterval(() => createAd({ source: 'flood' }), TUNING.adFloodIntervalMs);
+  const burst = () => { for (let i = 0; i < TUNING.adFloodPerTick; i++) setTimeout(() => { if (state.adFloodActive) createAd({ source: 'flood' }); }, i * 120); };
+  burst();
+  floodTimer = setInterval(burst, TUNING.adFloodIntervalMs);
 }
 
 /** "sorry, I like the video" — closes all ads at once (no sound). */
@@ -255,5 +288,6 @@ export function stopFlood() {
 }
 
 export function initAds() {
+  discoverReels();
   addEventListener('resize', () => state.openAds.forEach(layout));
 }
