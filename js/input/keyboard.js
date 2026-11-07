@@ -22,6 +22,9 @@ function onKeyDown(e) {
     return;
   }
 
+  // R: put the floating page back where it belongs (in hangman it still counts as a guess too)
+  if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey && !e.altKey) bus.emit('float:reset');
+
   // Shift + arrows: float impulse, any state (checked before plain arrows)
   if (e.shiftKey && ARROWS.includes(e.key)) {
     e.preventDefault();

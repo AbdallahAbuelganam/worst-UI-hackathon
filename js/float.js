@@ -79,5 +79,12 @@ export function initFloat() {
     bus.emit('float:started');
   }, TUNING.floatStartMs);
   bus.on('float:push', push);
+  // R: back to the original place, calm again (the seasickness starts over from zero)
+  bus.on('float:reset', () => {
+    px = py = vx = vy = 0;
+    outer.style.transform = '';
+    bob.style.transform = '';
+    if (floating) { startedAt = performance.now(); nextCurrent = startedAt + 3000; }
+  });
   requestAnimationFrame(tick);
 }
