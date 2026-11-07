@@ -47,6 +47,7 @@ export const TUNING = {
   floatCurrentEveryMs: [2500, 6000], // random currents shove the page
   floatCurrentPower: 7,
   buttonDelayMs: 2000,      // every on-screen button takes 2s to respond
+  keyDelayMs: 2000,         // …and so does EVERY key (jump, arrows, typing, commands)
   popupGrowPerOpen: 0.06,   // every pop-up opens bigger than the last…
   popupGrowMax: 0.7,
   popupCreepPerSec: 0.02,   // …and swells while it's open

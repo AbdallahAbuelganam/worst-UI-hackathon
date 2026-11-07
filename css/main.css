@@ -1938,6 +1938,24 @@ button, input {
   color: #7A4317;
 }
 
+.key-queue {
+  position: fixed;
+  left: 16px;
+  bottom: 12px;
+  z-index: 998;
+  background: #24130A;
+  color: #F5C542;
+  border: 3px solid #F5C542;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 4px 0 #5A3413;
+  pointer-events: none;
+  animation: toast-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .fake-cursor {
   position: fixed;
   left: 0;

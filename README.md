@@ -40,7 +40,8 @@ Design tokens (colours, Fredoka, radii, shadows, motion) live in `scss/_tokens.s
 The real mouse is banned: moving it calls the mouse police.
 
 Extra cruelty (all tunable in `js/config/tuning.js`):
-- **Every on-screen button takes 2 seconds to respond.** The cursor shows a "loading…" countdown while you wait.
+- **Every key and every button acts 2 seconds after you press it.** That includes jumping, ducking, cursor arrows, Space, Esc, R, hangman letters and even typing in the boxes. A "⌛ key(s) in the fryer" badge shows what's still waiting. On-screen buttons show a "loading…" countdown; pressing Enter on one takes 2s in total, not 4.
+- **Press R to put the floating page back in place** (2s later, like everything else).
 - **The page float gets worse over time.** Over 90s the bob grows from gentle to seasick. Random oil currents shove the page, and Shift+arrow pushes go slightly the wrong way.
 - **Pop-ups keep growing.** Each one opens bigger than the last and swells while it's open. Ads start bigger every time and creep larger, but the X stays 14px.
 - **A scream holds the volume for a full minute**, then it slides back to 0 over 20s.

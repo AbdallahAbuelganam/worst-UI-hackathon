@@ -55,6 +55,7 @@ function goHangman(video) {
 }
 
 function goPlayer(video) {
+  toIdle(); // make sure the dino game isn't still running in the background
   show('player');
   resetDislike();
   setScreen(S.PLAYER);
