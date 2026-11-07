@@ -158,7 +158,12 @@ export function createAd({ source = 'midroll' } = {}) {
     v.preload = 'auto';
     v.muted = true; // unmuted by refreshPlayback if it is the newest
     v.src = encodeURI(reel);
-    v.addEventListener('error', () => { brokenReels.add(reel); useFallback(ad); });
+    v.addEventListener('error', () => {
+      // removing an ad clears its src, which also fires 'error' — that's not a broken reel
+      if (ad.removed || !v.getAttribute('src')) return;
+      if (v.error && v.error.code !== MediaError.MEDIA_ERR_ABORTED) brokenReels.add(reel);
+      useFallback(ad);
+    });
     v.addEventListener('timeupdate', () => {
       if (v.duration) el.querySelector('.ad__progress i').style.width = `${(v.currentTime / v.duration) * 100}%`;
     });
@@ -244,6 +249,7 @@ function closeWithSound(ad) {
 
 function removeAd(ad, instant = false) {
   clearInterval(ad.skipTimer);
+  ad.removed = true;
   state.openAds = state.openAds.filter((a) => a !== ad);
   if (ad.video) { ad.video.pause(); ad.video.removeAttribute('src'); ad.video.load(); }
   if (instant) { ad.el.remove(); return; }

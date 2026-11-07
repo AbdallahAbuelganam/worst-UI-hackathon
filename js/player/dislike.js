@@ -42,11 +42,13 @@ function dodge() {
     .map((r) => [r.left - b.left - 12, r.right - b.left + 12]);
   taken.push([document.querySelector('.mic').getBoundingClientRect().left - b.left - 12, document.querySelector('.mic').getBoundingClientRect().right - b.left + 12]);
   const free = (cx) => taken.every(([l, r]) => cx + size < l || cx > r);
-  let x = from.x;
+  let x = null;
   for (let i = 0; i < 60; i++) {
     const cand = 16 + Math.random() * (bw - size - 32);
     if (free(cand) && Math.abs(cand - from.x) > 140) { x = cand; break; }
   }
+  // no free gap (narrow screen): any spot far away will do, even on top of something
+  if (x === null) x = from.x > bw / 2 ? 16 + Math.random() * (bw / 3) : bw - size - 16 - Math.random() * (bw / 3);
   const y = (bar.clientHeight - size) / 2 + (Math.random() - 0.5) * 16;
   btn.classList.add('is-free');
   if (btn.parentElement !== bar) bar.appendChild(btn);
