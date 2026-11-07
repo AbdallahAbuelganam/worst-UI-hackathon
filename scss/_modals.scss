@@ -1,0 +1,110 @@
+@use 'tokens' as *;
+
+.modal-wrap {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  width: min(380px, 90%);
+  z-index: $z-modal;
+  animation: cmd-in .2s $ease-pop;
+}
+
+.modal {
+  border-radius: 24px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+
+  &__row { display: flex; justify-content: space-between; align-items: center; }
+  &__timer { font-size: 30px; font-weight: 700; color: $tomato; font-variant-numeric: tabular-nums; }
+  &__title { font-size: 24px; font-weight: 700; line-height: 1.1; }
+  &__body { font-size: 14px; font-weight: 500; }
+  &__count { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  &__gain { font-size: 56px; font-weight: 700; color: $herb; line-height: 1; }
+  &__msg { font-size: 18px; font-weight: 600; line-height: 1.25; }
+  &__small { font-size: 13px; font-weight: 500; color: $crust; }
+}
+
+#m67-play, #m67-result { display: flex; flex-direction: column; gap: 10px; }
+
+.card-tahini {
+  background: $tahini;
+  border: 5px solid $ink;
+  box-shadow: 0 8px 0 $oil;
+  color: $ink;
+}
+
+.field {
+  height: 48px;
+  border: $border solid $ink;
+  border-radius: 14px;
+  background: $cream;
+  padding: 0 14px;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: $ink;
+  outline: none;
+  font-variant-numeric: tabular-nums;
+  &:focus { border-color: $golden; }
+}
+
+.bar {
+  height: 14px;
+  border-radius: $r-ball;
+  background: $pita;
+  overflow: hidden;
+  &__fill { width: 0%; height: 14px; border-radius: $r-ball; background: $golden; transition: width .1s; }
+}
+
+// S8 · Scream
+.scream {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  min-height: 220px;
+  color: $tahini;
+
+  .label-caps { color: $pita; }
+  &__title { font-size: 22px; font-weight: 700; }
+  &__sub { font-size: 14px; font-weight: 500; color: $pita; b { color: $fry; } }
+
+  &--wait { background: $oil; border: 5px solid $turnip; }
+  &--denied { background: $oil; border: 5px solid $crust; }
+  &--live {
+    background: $tomato;
+    border: 5px solid $oil;
+    box-shadow: 0 0 0 5px $fry;
+    flex-direction: row;
+    text-align: left;
+    color: $cream;
+    gap: 18px;
+    animation: scream-shake .1s linear infinite;
+    .label-caps { color: $cream; }
+  }
+  &__col { flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+  &__now { font-size: 44px; font-weight: 700; line-height: .95; color: $fry; -webkit-text-stroke: 2px $oil; }
+  &__peak { font-size: 15px; font-weight: 600; }
+  &__meter {
+    align-self: stretch;
+    width: 36px;
+    border-radius: $r-ball;
+    background: rgba(36, 19, 10, .4);
+    position: relative;
+    overflow: hidden;
+    border: $border solid $oil;
+  }
+  &__level { position: absolute; left: 0; right: 0; bottom: 0; height: 0%; background: $fry; }
+  &__peakline { position: absolute; left: 0; right: 0; bottom: 0%; height: 4px; background: $cream; }
+}
+
+@keyframes scream-shake {
+  0% { translate: -1px 0; }
+  50% { translate: 1px 1px; }
+  100% { translate: -1px 0; }
+}

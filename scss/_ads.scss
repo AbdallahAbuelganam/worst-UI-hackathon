@@ -1,0 +1,233 @@
+@use 'sass:list';
+@use 'tokens' as *;
+
+.ad-layer {
+  position: absolute;
+  inset: 0;
+  z-index: $z-ads;
+  pointer-events: none;
+}
+
+// S11 · flood counter + the only way out
+.flood-panel {
+  position: absolute;
+  right: 24px;
+  top: 72px;
+  max-width: 300px;
+  z-index: $z-flood + 10;
+  background: $tahini;
+  color: $ink;
+  border: 4px solid $ink;
+  border-radius: 18px;
+  padding: 12px 16px;
+  box-shadow: 0 6px 0 $ink;
+  animation: ad-spawn .25s $ease-pop;
+  transform-origin: top right;
+  &__count { font-size: 13px; font-weight: 600; color: $tomato; font-variant-numeric: tabular-nums; }
+  &__text { font-size: 16px; font-weight: 600; line-height: 1.3; }
+}
+
+// S3 · Reel ad — a cheap phone-reel in a 9:16 box. The X never grows. Everything else does.
+.ad {
+  position: absolute;
+  pointer-events: auto;
+  transform-origin: center;
+  animation: ad-spawn .2s $ease-pop;
+
+  &__frame {
+    position: absolute;
+    inset: 0;
+    border: 3px solid $turnip;
+    border-radius: 14px;
+    background: $oil;
+    overflow: hidden;
+    container-type: size;
+    animation: ad-blink 1s steps(2) infinite;
+  }
+
+  &__reel {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: $oil;
+  }
+
+  &__top {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    z-index: 2;
+  }
+  &__pill {
+    background: $fry;
+    color: $oil;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: $r-ball;
+  }
+  &__skip {
+    font-size: 9px;
+    font-weight: 600;
+    color: $cream;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .7);
+    font-variant-numeric: tabular-nums;
+  }
+
+  // tiny, low-contrast, inset. ALWAYS 14px.
+  &__x {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    z-index: 3;
+    display: block;
+    path { stroke: rgba(255, 248, 234, .4); }
+    &.is-hover {
+      background: rgba(255, 248, 234, .25);
+      box-shadow: 0 0 0 2px $fry;
+      path { stroke: $cream; }
+    }
+  }
+
+  &__progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: rgba(36, 19, 10, .3);
+    z-index: 2;
+    i { display: block; height: 4px; width: 0%; background: $cream; }
+  }
+
+  &__loud {
+    position: absolute;
+    left: 8px;
+    bottom: 10px;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    background: $oil;
+    border-radius: $r-ball;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: $fry;
+    z-index: 2;
+  }
+  &.is-loud.is-flood &__loud { display: flex; }
+
+  &__closing {
+    position: absolute;
+    inset: 0;
+    background: rgba(36, 19, 10, .72);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px;
+    text-align: center;
+    z-index: 4;
+    svg { width: 22cqw; height: auto; max-width: 72px; }
+  }
+  &__skipping { font-size: clamp(16px, 9cqw, 36px); font-weight: 700; color: $fry; }
+  &__enjoy { font-size: clamp(10px, 4.2cqw, 15px); font-weight: 500; color: $tahini; max-width: 260px; }
+  &__bar {
+    width: 60cqw;
+    height: 10px;
+    border-radius: $r-ball;
+    background: rgba(246, 236, 214, .2);
+    overflow: hidden;
+    i { display: block; height: 10px; width: 0%; border-radius: $r-ball; background: $fry; }
+  }
+  &.is-closing &__closing { display: flex; }
+
+  &.is-leaving { animation: ad-leave .2s ease-in forwards; }
+  &.is-growing { animation: ad-grow .25s $ease-pop; }
+
+  // ---- each growth step looks a bit more desperate ----
+  $steps: (
+    0: (3px,  $turnip, none, 14px, 1s, 9px, 6px),
+    1: (4px,  $turnip, 0 0 0 2px $fry, 15px, .9s, 10px, 7px),
+    2: (5px,  $turnip, 0 0 0 3px $fry, 16px, .8s, 11px, 8px),
+    3: (6px,  $tomato, 0 0 0 3px $fry, 16px, .6s, 11px, 9px),
+    4: (8px,  $tomato, (0 0 0 4px $fry, 0 0 0 8px $tomato), 18px, .45s, 12px, 10px),
+    5: (10px, $tomato, (0 0 0 4px $fry, 0 0 0 8px $tomato, 0 0 30px $turnip), 19px, .35s, 13px, 11px),
+    6: (12px, $tomato, (0 0 0 5px $fry, 0 0 0 10px $tomato, 0 0 40px $fry), 20px, .25s, 13px, 12px),
+  );
+  @each $i, $s in $steps {
+    &[data-step='#{$i}'] {
+      .ad__frame {
+        border-width: list.nth($s, 1);
+        border-color: list.nth($s, 2);
+        box-shadow: list.nth($s, 3);
+        border-radius: list.nth($s, 4);
+        animation-duration: list.nth($s, 5);
+      }
+      .ad__pill, .ad__skip { font-size: list.nth($s, 6); }
+      .ad__top { left: list.nth($s, 7); top: list.nth($s, 7); }
+      .ad__x { right: list.nth($s, 7); top: list.nth($s, 7); }
+    }
+  }
+}
+
+@keyframes ad-spawn {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes ad-grow {
+  0% { transform: scale(var(--from, .8)); }
+  60% { transform: scale(1.06) translateX(2px); }
+  75% { transform: scale(.99) translateX(-2px); }
+  100% { transform: scale(1) translateX(0); }
+}
+@keyframes ad-leave { to { transform: scale(.2); opacity: 0; } }
+@keyframes ad-blink { 50% { border-color: $fry; } }
+
+// ---- Fallback static ads · same 9:16 frame, 2005 energy (sized in container units) ----
+.fad {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4cqh;
+  padding: 10cqw;
+  text-align: center;
+  color: $oil;
+  font-weight: 700;
+
+  &__big { font-size: 7.4cqh; line-height: 1.05; }
+  &__huge { font-size: 15cqh; line-height: 1; color: $cream; }
+  &__small { font-size: 3.9cqh; font-weight: 600; }
+  &__icon { width: 36cqw; height: auto; }
+  &__btn {
+    background: $tomato;
+    color: $cream;
+    font-size: 4.6cqh;
+    padding: 2cqh 6cqw;
+    border-radius: 8px;
+    border: $border solid $oil;
+    animation: ad-blink 0.4s steps(2) infinite;
+  }
+
+  &--falafel { background: linear-gradient(160deg, $turnip, $fry); }
+  &--ram { background: linear-gradient(90deg, $herb, $fry 50%, $herb); }
+  &--doctors { background: $oil; color: $fry; }
+  &--virus { background: repeating-linear-gradient(45deg, $cream 0 14px, $tahini 14px 28px); color: $tomato; .fad__small { color: $oil; } }
+  &--fries { background: $fry; .fad__big { font-size: 9.2cqh; } }
+  &--hangman { background: linear-gradient(200deg, $cream, $herb); .fad__word { font-size: 9.2cqh; letter-spacing: 4px; } }
+  &--oil { background: radial-gradient(circle at 50% 40%, $fry, $golden 60%, $crust); }
+  &--congrats { background: $cream; .fad__kicker { color: $turnip; font-size: 5.3cqh; font-weight: 600; } .fad__small { color: $ink; } }
+}

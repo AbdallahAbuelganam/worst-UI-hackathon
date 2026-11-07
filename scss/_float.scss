@@ -1,0 +1,39 @@
+@use 'tokens' as *;
+
+// outer = pushed by Shift+arrows (JS), bob = idle bob (CSS), world = the card (shakes)
+#world-outer {
+  position: fixed;
+  inset: 0;
+  will-change: transform;
+}
+
+#world-bob {
+  position: absolute;
+  inset: 0;
+  &.is-floating { animation: bob 4s ease-in-out infinite; }
+}
+
+// The page is a card floating in oil
+.world {
+  position: absolute;
+  inset: 28px 40px 36px;
+  background: $tahini;
+  border: $border-world solid $ink;
+  border-radius: $r-xl;
+  box-shadow: $float;
+  overflow: hidden;
+  transition: background-color .3s, inset .3s;
+
+  &.is-player {
+    inset: 14px;
+    background: $oil;
+  }
+}
+
+@keyframes bob {
+  0%   { transform: translateY(0) rotate(0deg); }
+  25%  { transform: translateY(-12px) rotate(1.5deg); }
+  50%  { transform: translateY(0) rotate(0deg); }
+  75%  { transform: translateY(12px) rotate(-1.5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}

@@ -1,0 +1,193 @@
+@use 'tokens' as *;
+
+// ---- S14 · Toasts ----
+.toast-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: $z-toast;
+  pointer-events: none;
+}
+.toast {
+  background: $oil;
+  color: $tahini;
+  border: $border solid $fry;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  animation: toast-in .2s $ease-pop;
+  &--like { border-color: $herb; }
+  &--warn { border-color: $fry; }
+  &--danger { border-color: $tomato; }
+  &--info { border-color: $golden; }
+  &.is-out { animation: toast-out .2s ease-in forwards; }
+}
+@keyframes toast-in { from { transform: translateY(-16px) scale(.8); opacity: 0; } }
+@keyframes toast-out { to { transform: translateY(-10px); opacity: 0; } }
+
+// ---- S12 · Mouse police (outside #world, never floats) ----
+.mouse-police {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 64px;
+  background: $tomato;
+  border: 4px solid $oil;
+  border-top: 0;
+  border-radius: 0 0 22px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: $cream;
+  box-shadow: 0 8px 0 $oil;
+  z-index: 999;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  transform: translateY(-120%);
+  pointer-events: none;
+  &.is-on { animation: police 1.8s $ease-drop forwards; }
+}
+@keyframes police {
+  0% { transform: translateY(-120%); }
+  16.6% { transform: translateY(0); }
+  90% { transform: translateY(0); }
+  100% { transform: translateY(-120%); }
+}
+
+// ---- Shake (crash + mouse police) ----
+.world.is-shaking { animation: shake .6s linear; }
+@keyframes shake {
+  0% { translate: 0 0; }
+  10% { translate: -14px 8px; rotate: -1deg; }
+  20% { translate: 12px -10px; rotate: 1deg; }
+  30% { translate: -10px 6px; }
+  40% { translate: 8px -6px; rotate: .5deg; }
+  50% { translate: -6px 4px; }
+  60% { translate: 5px -3px; }
+  70% { translate: -3px 2px; rotate: 0deg; }
+  80% { translate: 2px -1px; }
+  90% { translate: -1px 1px; }
+  100% { translate: 0 0; }
+}
+
+// ---- S9 · Crash ----
+.flash {
+  position: absolute;
+  inset: 0;
+  background: $cream;
+  box-shadow: inset 0 0 160px $fry;
+  opacity: 0;
+  pointer-events: none;
+  z-index: $z-flash;
+  &.is-on { animation: flash .28s ease-out; }
+  &.is-pink { background: $turnip; box-shadow: none; animation: pink 1s ease-out; }
+}
+@keyframes flash { 0%, 28% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes pink { 0%, 70% { opacity: .85; } 100% { opacity: 0; } }
+
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: $z-fx;
+  overflow: hidden;
+}
+
+.crumb {
+  position: absolute;
+  border-radius: $r-ball;
+  &--ball { background: $bean; border: 2px solid $ink; }
+  &--fry { background: $fry; border-radius: 3px; border: 1px solid $crust; }
+  &--herb { background: $herb; }
+  &--oil { background: $golden; }
+}
+
+.scar-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: $z-scar;
+  svg { position: absolute; inset: 0; width: 100%; height: 100%; animation: scar-in .2s ease-out; }
+}
+@keyframes scar-in { from { opacity: 0; } }
+
+// ---- SIX SEVEN ----
+.six-seven {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  font-size: 140px;
+  font-weight: 700;
+  color: $turnip;
+  -webkit-text-stroke: 5px $oil;
+  letter-spacing: 1px;
+  line-height: 1;
+  white-space: nowrap;
+  animation: six-seven .3s ease-out forwards;
+  span { display: block; font-size: 60px; color: $fry; -webkit-text-stroke: 3px $oil; text-align: center; }
+}
+@keyframes six-seven {
+  from { transform: translate(-50%, -50%) scale(.5) rotate(var(--tilt, 0deg)); opacity: 1; }
+  to { transform: translate(-50%, -50%) scale(1.4) rotate(var(--tilt, 0deg)); opacity: 0; }
+}
+
+// ---- Autocorrect gags ----
+.gag {
+  position: absolute;
+  pointer-events: none;
+  font-size: 120px;
+  line-height: 1;
+  &--pray { left: 50%; top: 45%; animation: pray 1.6s ease-out forwards; }
+  &--woof {
+    left: 50%;
+    top: 45%;
+    font-size: 64px;
+    font-weight: 700;
+    color: $fry;
+    -webkit-text-stroke: 3px $oil;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: pray 1.6s ease-out forwards;
+    i { font-style: normal; font-size: 120px; -webkit-text-stroke: 0; }
+  }
+  &--paw { font-size: 42px; animation: paw 1.6s ease-out forwards; }
+}
+@keyframes pray {
+  0% { transform: translate(-50%, -50%) scale(.3); opacity: 0; }
+  20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translate(-50%, -60%) scale(1); opacity: 0; }
+}
+@keyframes paw { 0% { opacity: 0; transform: scale(.4) rotate(var(--r, 0deg)); } 15% { opacity: 1; transform: scale(1) rotate(var(--r, 0deg)); } 100% { opacity: 0; transform: rotate(var(--r, 0deg)); } }
+
+.foreword {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(440px, 86%);
+  background: $cream;
+  border: 5px solid $ink;
+  border-radius: 8px 20px 20px 8px;
+  box-shadow: -10px 0 0 $crust, $float;
+  padding: 28px 32px;
+  z-index: 1;
+  color: $ink;
+  animation: cmd-in .25s $ease-pop;
+  h3 { margin: 0 0 6px; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: $crust; }
+  p { margin: 0 0 10px; font-size: 16px; font-weight: 500; line-height: 1.45; }
+  em { font-size: 13px; color: $crust; }
+}

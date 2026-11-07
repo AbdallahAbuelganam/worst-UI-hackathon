@@ -1,0 +1,264 @@
+@use 'tokens' as *;
+
+.player {
+  background: $roast;
+  color: $tahini;
+
+  &__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: $roast;
+  }
+
+  &__missing {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: $sesame;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  &__head {
+    position: absolute;
+    left: 28px;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, .6);
+  }
+  &__title { font-size: 28px; font-weight: 700; }
+  &__leave { font-size: 14px; font-weight: 500; color: $pita; b { color: $fry; } }
+
+  &__keys {
+    position: absolute;
+    right: 24px;
+    top: 24px;
+    background: $glass;
+    border: 2px solid $crust;
+    border-radius: $r-ball;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: $pita;
+  }
+
+  &__state {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    transform: translate(-50%, -50%);
+    width: 240px;
+    min-height: 124px;
+    border-radius: 14px;
+    background: $roast;
+    border: $border solid $crust;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    animation: state-in .2s $ease-pop;
+    b { color: $fry; }
+
+    &--ended { border-color: $tomato; font-weight: 500; font-size: 13px; }
+  }
+  &__killed { font-size: 22px; font-weight: 700; color: $tomato; }
+
+  &__bar {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    height: 104px;
+    background: $glass;
+    border: 2px solid $crust;
+    border-radius: 26px;
+    box-shadow: 0 0 0 2px $oil, 0 18px 40px rgba(0, 0, 0, .5);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 24px;
+  }
+}
+
+// The very clickable trap
+.btn-decoy {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: $r-ball;
+  border: 4px solid $oil;
+  background: $fry;
+  box-shadow: 0 6px 0 $crust, 0 0 28px rgba(245, 197, 66, .7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: decoy-glow 1.6s ease-in-out infinite;
+  &.is-hover { transform: scale(1.08); box-shadow: 0 6px 0 $crust, 0 0 44px rgba(245, 197, 66, 1); }
+}
+
+.timeline {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+
+  &__track {
+    position: relative;
+    height: 14px;
+    border-radius: $r-ball;
+    background: rgba(246, 236, 214, .18);
+  }
+  &__fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    border-radius: $r-ball;
+    background: $golden;
+  }
+  &__dot {
+    position: absolute;
+    left: 0%;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border-radius: $r-ball;
+    background: $bean;
+    border: $border solid $fry;
+    box-shadow: 0 0 0 3px $oil;
+    &.is-panic { animation: dot-panic .12s linear infinite; }
+  }
+  &__meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 500;
+    color: $pita;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.oil-drop {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: $r-ball;
+  background: $fry;
+  pointer-events: none;
+  animation: oil-drop .5s ease-out forwards;
+}
+
+.btn-chunky {
+  height: 56px;
+  border-radius: 16px;
+  border: $border solid $oil;
+  background: $golden;
+  color: $oil;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  box-shadow: 0 5px 0 $crust;
+  flex-shrink: 0;
+}
+
+.btn-round, .btn-square {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border: $border solid $oil;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-round { border-radius: $r-ball; }
+.btn-square { border-radius: 16px; box-shadow: 0 5px 0 $roast; }
+
+.btn-mic { background: $turnip; box-shadow: 0 5px 0 $crust; }
+.btn-like { background: $herb; }
+.btn-dislike {
+  background: $tomato;
+  transition: none;
+  &.is-free { position: absolute; z-index: 3; }
+  &.gave-up {
+    border-color: $fry;
+    animation: gave-up .18s linear infinite;
+    box-shadow: 4px 0 0 rgba(214, 58, 42, .4), -4px 0 0 rgba(214, 58, 42, .4);
+  }
+}
+.dislike-slot { width: 56px; height: 56px; flex-shrink: 0; }
+
+.dislike-ghost {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: $tomato;
+  pointer-events: none;
+  z-index: 2;
+  animation: ghost-fade .3s ease-out forwards;
+}
+
+// hover feedback for every controllable thing
+.btn-chunky, .btn-round, .btn-square {
+  &.is-hover { transform: translateY(-2px); outline: 3px dashed $fry; outline-offset: 3px; }
+}
+
+.mic {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  &__label { font-size: 12px; font-weight: 600; color: $pita; line-height: 1.2; font-variant-numeric: tabular-nums; width: 28px; }
+}
+
+.vmeter {
+  width: 14px;
+  height: 72px;
+  border-radius: $r-ball;
+  background: rgba(246, 236, 214, .18);
+  position: relative;
+  overflow: hidden;
+  &__fill { position: absolute; left: 0; right: 0; bottom: 0; height: 0%; background: $herb; }
+  &__peak { position: absolute; left: -2px; right: -2px; bottom: 0%; height: 3px; background: $fry; }
+}
+
+@keyframes decoy-glow {
+  0%, 100% { box-shadow: 0 6px 0 $crust, 0 0 20px rgba(245, 197, 66, .55); }
+  50% { box-shadow: 0 6px 0 $crust, 0 0 38px rgba(245, 197, 66, .95); }
+}
+@keyframes dot-panic {
+  0% { transform: translate(-1px, 1px); }
+  50% { transform: translate(1px, -1px); }
+  100% { transform: translate(-1px, 1px); }
+}
+@keyframes oil-drop { to { transform: translateY(14px) scale(.2); opacity: 0; } }
+@keyframes gave-up {
+  0% { transform: rotate(-6deg) translateX(-1px); }
+  50% { transform: rotate(-3deg) translateX(1px); }
+  100% { transform: rotate(-6deg) translateX(-1px); }
+}
+@keyframes ghost-fade { to { opacity: 0; } }
+@keyframes state-in { from { transform: translate(-50%, -50%) scale(.7); opacity: 0; } }

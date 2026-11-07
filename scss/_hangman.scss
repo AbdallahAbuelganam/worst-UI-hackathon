@@ -1,0 +1,131 @@
+@use 'tokens' as *;
+
+.hangman {
+  display: flex;
+  gap: 32px;
+  padding: 32px 48px;
+
+  &__gallows {
+    flex: 0 0 auto;
+    width: min(300px, 30vw);
+    display: flex;
+    align-items: center;
+    svg { width: 100%; height: auto; max-height: 100%; }
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  &__slots { display: flex; gap: 12px; flex-wrap: wrap; }
+  &__slot {
+    width: 52px;
+    height: 64px;
+    border-bottom: 6px solid $ink;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 64px;
+    text-align: center;
+    color: $crust;
+    &.is-new { animation: slot-pop .25s $ease-pop; }
+  }
+
+  &__hint {
+    align-self: flex-start;
+    background: $pita;
+    border: $border solid $ink;
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  &__group { display: flex; flex-direction: column; gap: 8px; }
+  &__label { font-size: 14px; font-weight: 600; color: $crust; }
+  &__wrong { display: flex; gap: 8px; min-height: 40px; flex-wrap: wrap; }
+  &__chip {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: $tomato;
+    color: $cream;
+    font-size: 22px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: line-through;
+    animation: slot-pop .25s $ease-pop;
+  }
+
+  &__lives { display: flex; align-items: center; gap: 10px; }
+  &__balls { display: flex; gap: 10px; }
+  &__ball {
+    width: 22px;
+    height: 22px;
+    border-radius: $r-ball;
+    background: $bean;
+    border: $border solid $ink;
+    &.is-lost { background: transparent; border: $border dashed $sesame; }
+  }
+
+  &__foot { font-size: 14px; font-weight: 500; color: $crust; }
+
+  &__result {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(420px, 80%);
+    min-height: 280px;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 28px;
+    text-align: center;
+    z-index: 5;
+    animation: result-in .3s $ease-pop;
+
+    &--lose { background: $oil; border: $border-world solid $tomato; }
+    &--win  {
+      background: $herb;
+      border: $border-world solid $ink;
+      box-shadow: 0 0 0 6px $fry;
+      animation: result-in .3s $ease-pop, win-flash .2s steps(2) 3;
+    }
+  }
+  &__extinct { font-size: 64px; font-weight: 700; color: $tomato; letter-spacing: 3px; line-height: 1; animation: extinct 1.2s ease-out; }
+  &__result-sub { font-size: 15px; font-weight: 500; color: $tahini; }
+  &__win-word { font-size: 44px; font-weight: 700; color: $cream; letter-spacing: 6px; }
+  &__crispy { font-size: 32px; font-weight: 700; color: $fry; }
+  &__result--win &__result-sub { color: $cream; }
+}
+
+#hangman-rex .part { transition: opacity .2s; }
+#hangman-rex .ghost { fill: none; stroke: $sesame; stroke-width: .25; stroke-dasharray: .6 .4; }
+#hangman-swing.is-dead { animation: swing 1s ease-in-out infinite; transform-origin: 226px 52px; transform-box: view-box; }
+
+@keyframes swing {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(6deg); }
+}
+@keyframes slot-pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes result-in { from { transform: translate(-50%, -50%) scale(.6); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+@keyframes win-flash { 50% { filter: brightness(1.5); } }
+@keyframes extinct {
+  0% { transform: scale(2.4) rotate(-8deg); opacity: 0; }
+  30% { transform: scale(.9) rotate(3deg); opacity: 1; }
+  45% { transform: scale(1.05) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0); }
+}

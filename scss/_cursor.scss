@@ -1,0 +1,43 @@
+@use 'tokens' as *;
+
+// S13 · Fake cursor — lives in screen coords, never floats with the page
+.fake-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: 1000;
+  pointer-events: none;
+
+  &__arrow {
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    fill: $fry;
+    transition: transform .08s;
+    filter: drop-shadow(0 2px 0 rgba(36, 19, 10, .4));
+  }
+  &__ring {
+    position: absolute;
+    left: -13px;
+    top: -13px;
+    width: 26px;
+    height: 26px;
+    border-radius: $r-ball;
+    border: 3px dashed $golden;
+    opacity: 0;
+    transition: opacity .1s;
+  }
+
+  &.is-hover {
+    .fake-cursor__arrow { fill: $turnip; }
+    .fake-cursor__ring { opacity: 1; animation: ring-spin 2s linear infinite; }
+  }
+  &.is-click {
+    .fake-cursor__arrow { fill: $crust; transform: scale(.85); }
+    .fake-cursor__ring { opacity: 1; border: 0; background: rgba(245, 197, 66, .5); transform: scale(1.15); }
+  }
+}
+
+@keyframes ring-spin { to { rotate: 360deg; } }

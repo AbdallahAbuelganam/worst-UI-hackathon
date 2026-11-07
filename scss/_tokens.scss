@@ -1,0 +1,57 @@
+// Design tokens — from the Claude Design export ("Deep-fried design tokens")
+// Colour — the falafel plate
+$crust:   #7A4317; // brand, headings
+$golden:  #D08A2A; // accent, oil
+$herb:    #5E8C31; // success, inside
+$fry:     #F5C542; // highlights
+$tomato:  #D63A2A; // danger, dislike
+$turnip:  #D9437A; // ads, pickles
+$tahini:  #F6ECD6; // dino paper
+$pita:    #E6C88E; // panels, ground
+$ink:     #5A3413; // dino ink, borders
+$oil:     #24130A; // player bg
+$glass:   rgba(36, 19, 10, .82);
+$fryer:   #B8741F; // bg fallback
+// supporting shades used across the boards
+$cream:   #FFF8EA;
+$bean:    #8C5220; // falafel ball
+$roast:   #3B200C; // player stage, dark boards
+$sesame:  #C9A877; // muted / ghost lines
+
+// Type — Fredoka only (inputs use tracking + tabular numbers instead of a mono font)
+$font: 'Fredoka', sans-serif;
+
+// Radii
+$r-sm: 6px;
+$r-md: 12px;
+$r-lg: 20px;
+$r-xl: 28px;
+$r-ball: 999px;
+
+// Spacing scale
+$s1: 4px; $s2: 8px; $s3: 12px; $s4: 16px; $s5: 24px; $s6: 32px; $s7: 48px;
+
+// Borders
+$border: 3px;
+$border-world: 6px;
+
+// Shadows
+$crunch: 0 6px 0 $ink;
+$float:  0 10px 0 $ink, 0 28px 48px rgba(36, 19, 10, .5);
+$sizzle: 0 0 0 2px $golden, 0 0 24px rgba(245, 197, 66, .55);
+
+// Motion
+$ease-panic: cubic-bezier(.55, 0, 1, .45);
+$ease-drop:  cubic-bezier(.3, 1.5, .6, 1);
+$ease-pop:   cubic-bezier(.34, 1.56, .64, 1);
+
+// Layers inside #world
+$z-screen: 1;
+$z-ads: 20;
+$z-flood: 25;
+$z-modal: 30;
+$z-cmd: 40;
+$z-toast: 50;
+$z-fx: 55;
+$z-scar: 60;
+$z-flash: 70;

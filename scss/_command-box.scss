@@ -1,0 +1,87 @@
+@use 'tokens' as *;
+
+// S6 · Command box — "the pita pocket"
+.cmd-wrap {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -50%);
+  width: min(460px, 90%);
+  z-index: $z-cmd;
+  animation: cmd-in .2s $ease-pop;
+}
+
+.cmd {
+  background: $pita;
+  border: 5px solid $ink;
+  border-radius: 32px;
+  padding: 20px;
+  box-shadow: 0 8px 0 $oil;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: $ink;
+
+  &__label { font-size: 14px; font-weight: 600; }
+
+  &__input {
+    height: 52px;
+    border: $border solid $ink;
+    border-radius: 16px;
+    background: $cream;
+    padding: 0 16px;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: $ink;
+    outline: none;
+    caret-color: $tomato;
+    &::placeholder { color: $sesame; }
+    &.is-typed { border-color: $golden; box-shadow: 0 0 0 4px rgba(245, 197, 66, .6); }
+    &.is-ok { border-color: $herb; box-shadow: none; }
+    &.is-refused { border-color: $tomato; box-shadow: none; }
+  }
+
+  &__correct {
+    height: 52px;
+    border: $border solid $turnip;
+    border-radius: 16px;
+    background: $cream;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  &__from {
+    color: $sesame;
+    text-decoration: line-through;
+    text-decoration-color: $tomato;
+    text-decoration-thickness: 3px;
+    animation: strike .35s ease-out;
+  }
+  &__to { font-weight: 700; color: $turnip; animation: slot-pop .3s $ease-pop .25s both; }
+
+  &__response {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 15px;
+    font-weight: 600;
+    animation: slot-pop .2s $ease-pop;
+    &--ok { background: $herb; color: $cream; }
+    &--refused { background: $tomato; color: $cream; font-size: 18px; font-weight: 700; }
+    &--info { background: $oil; color: $tahini; }
+  }
+
+  &__sub { font-size: 13px; font-weight: 500; color: $crust; }
+}
+
+@keyframes cmd-in { from { transform: translate(-50%, -50%) scale(.8); opacity: 0; } }
+@keyframes strike { from { text-decoration-color: transparent; color: $ink; } }
