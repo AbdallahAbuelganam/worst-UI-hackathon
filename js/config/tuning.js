@@ -18,7 +18,7 @@ export const TUNING = {
   adFloodCap: 45,           // 3× the old cap
   adFloodPlayingCount: 3,
   adSizeStepsVh: [30, 40, 50, 60, 70, 80, 92],
-  adCloseClicks: 7,
+  adCloseClicks: 2,
   adXSizePx: 14,
   adBoostPerAd: 0.02,       // each new ad starts 2% of screen height bigger than the last…
   adBoostMax: 0.3,          // …up to +30%
@@ -47,7 +47,7 @@ export const TUNING = {
   floatCurrentEveryMs: [2500, 6000], // random currents shove the page
   floatCurrentPower: 7,
   buttonDelayMs: 2000,      // every on-screen button takes 2s to respond
-  keyDelayMs: 2000,         // …and so does EVERY key (jump, arrows, typing, commands)
+  keyDelayMs: 500,         // …and so does EVERY key (jump, arrows, typing, commands)
   popupGrowPerOpen: 0.06,   // every pop-up opens bigger than the last…
   popupGrowMax: 0.7,
   popupCreepPerSec: 0.02,   // …and swells while it's open
